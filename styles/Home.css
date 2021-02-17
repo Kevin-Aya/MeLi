@@ -1,0 +1,42 @@
+.navbar {
+  background-color: #ffe600;
+  height: 52px;
+  align-items: center;
+}
+
+.searchbar {
+  width: 100%;
+  background: #fff;
+  height: 40px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18;
+}
+
+.searchbar:focus {
+  outline: 0px solid transparent;
+  outline-offset: 2px;
+}
+
+.searchButton {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  background-color: #eee;
+  border-radius: 0 4px 4px 0;
+}
+
+.searchButton:hover {
+  cursor: pointer;
+}
+
+
+
+.searchButton > img {
+  height: 20px;
+}
