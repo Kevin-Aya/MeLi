@@ -29,13 +29,13 @@
   width: 40px;
   background-color: #eee;
   border-radius: 0 4px 4px 0;
+  /* transition: all 0.5s ease; */
 }
 
 .searchButton:hover {
   cursor: pointer;
+  /* transform: scale(1.2, 1.2); */
 }
-
-
 
 .searchButton > img {
   height: 20px;

@@ -1,11 +1,19 @@
 import Container from "../../components/Container";
+import Product from "../../components/product";
 
-function Items({ userName, search }) {
+function Items({ data, notFound }) {
   return (
     <Container>
-      <p>
-        Hola {userName} ,estás buscando {search}
-      </p>
+      {notFound ? (
+        <p className="notFound">Busqueda no encontrada 😔</p>
+      ) : (
+        data?.items.map((item, index) => (
+          <>
+            <Product key={index} item={item} />
+            {index != data.items.length && <div className="divider"></div>}
+          </>
+        ))
+      )}
     </Container>
   );
 }
@@ -13,22 +21,10 @@ export async function getServerSideProps(context) {
   let {
     query: { search },
   } = context;
-  // console.log("Query:", search);
-  const res = await fetch(`http://localhost:3000/api/items`);
-  const { userName } = await res.json();
-  console.log("userName:", userName);
-  if (!userName) {
-    return {
-      notFound: true,
-    };
-  }
+  const res = await fetch(`http://localhost:3000/api/items?search=${search}`);
+  const data = await res.json();
 
-  return {
-    props: {
-      search,
-      userName,
-    },
-  };
+  return { props: { data, notFound: !Object.keys(data).length } };
 }
 
 export default Items;

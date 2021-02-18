@@ -1,6 +1,8 @@
 import Navbar from "../components/Navbar";
 import "../styles/globals.css";
 import "../styles/Home.css";
+import "../styles/Product.css"
+import "../styles/ItemDetail.css"
 function MyApp({ Component, pageProps }) {
   return (
     <>

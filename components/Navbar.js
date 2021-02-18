@@ -17,22 +17,22 @@ export default function Navbar() {
   };
 
   return (
-    <div className="bg-indigo-800">
+    <>
       <Head>
         <title>Mercado libre</title>
         <link rel="icon" href="/logo.png" />
       </Head>
       <header className="row-auto">
         <div className="navbar grid grid-cols-12">
-          <div className="col-span-1"></div>
-          <div className="col-span-1 flex items-center">
+          <div className="col-span-1 sm:hidden md:block md:col-span-1 xl:col-span-2"></div>
+          <div className="hidden justify-center sm:flex sm:col-span-2 md:col-span-1 items-center">
             <img
-              className="col-span-1 h-9"
+              className="sm:col-span-2 md:col-span-1 h-9"
               src="/logo.png"
               onClick={onClickLogo}
             />
           </div>
-          <div className="relative col-span-9 ">
+          <div className="relative col-span-10 sm:col-span-10 md:col-span-9 xl:col-span-7 ">
             <input
               type="text"
               name="buscador"
@@ -41,6 +41,9 @@ export default function Navbar() {
               placeholder="Nunca dejes de buscar"
               value={search}
               onChange={({ target }) => setSearch(target.value)}
+              onKeyPress={(e) => {
+                e.key == "Enter" && onClickSearch();
+              }}
             />
             <div className="searchButton" onClick={onClickSearch}>
               <img src="/search.png" />
@@ -48,6 +51,6 @@ export default function Navbar() {
           </div>
         </div>
       </header>
-    </div>
+    </>
   );
 }
