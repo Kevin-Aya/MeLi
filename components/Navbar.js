@@ -25,7 +25,7 @@ export default function Navbar() {
       <header className="row-auto">
         <div className="navbar grid grid-cols-12">
           <div className="col-span-1 sm:hidden md:block md:col-span-1 xl:col-span-2"></div>
-          <div className="hidden justify-center sm:flex sm:col-span-2 md:col-span-1 items-center">
+          <div className="hidden justify-center sm:flex sm:col-span-2 md:col-span-1 xl:justify-start items-center">
             <img
               className="sm:col-span-2 md:col-span-1 h-9"
               src="/logo.png"
