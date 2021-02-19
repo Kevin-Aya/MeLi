@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-import ImageComponent from "../components/ImageComponent";
+import ImageComponent from "./ImageComponent";
 
 export default function Product({
   item: { id, title, picture, price, free_shipping, state_name },

@@ -11,7 +11,6 @@ export default function ImageComponent({ url, title, width, height }) {
       width={width}
       height={height}
       alt={title}
-      layout="intrinsic"
       objectFit="contain"
       className="image"
       decoding="async"

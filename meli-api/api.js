@@ -8,13 +8,18 @@ export const getItems = async (searchText) => {
       data = await res.json();
 
     if (data?.error) {
-      throw { error: item.error, message: error.message, status: item.status };
+      throw {
+        error: data.error || "Internal Server Error",
+        message: data.message || "Internal Server Error",
+        status: data.status || 500,
+      };
     }
     let items = data?.results.slice(0, 4);
     const schema = await schemaItems(items);
 
     return schema;
   } catch (error) {
+    console.log("error:", error);
     return error;
   }
 };
@@ -29,7 +34,11 @@ export const getItemById = async (id) => {
     ]);
 
     if (item?.error) {
-      throw { error: item.error, message: error.message, status: item.status };
+      throw {
+        error: item.error || "Internal Server Error",
+        message: item.message || "Internal Server Error",
+        status: item.status || 500,
+      };
     }
 
     let schema = schemaDetailItem(item, description);
@@ -109,7 +118,7 @@ const schemaDetailItem = (item, description) => {
     sold_quantity,
     shipping: { free_shipping },
   } = item;
-  let { plain_text } = description;
+  let { plain_text, error } = description;
 
   //Get first pic
   let pictureTransformed = pictures.length && pictures.shift()?.url;
@@ -135,7 +144,7 @@ const schemaDetailItem = (item, description) => {
       condition: condition,
       free_shipping,
       sold_quantity,
-      description: plain_text,
+      description: error ? "No hay descripción del producto" : plain_text,
     },
   };
 };

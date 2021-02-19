@@ -1,8 +1,8 @@
 import Navbar from "../components/Navbar";
-import "../styles/globals.css";
-import "../styles/Home.css";
-import "../styles/Product.css"
-import "../styles/ItemDetail.css"
+import "../styles/globals.scss";
+import "../styles/Home.scss";
+import "../styles/Product.scss";
+import "../styles/ItemDetail.scss";
 function MyApp({ Component, pageProps }) {
   return (
     <>
