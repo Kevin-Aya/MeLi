@@ -19,7 +19,7 @@ export async function getServerSideProps(context) {
   let {
     query: { search },
   } = context;
-  const res = await fetch(`http://localhost:3000/api/items?search=${search}`);
+  const res = await fetch(`${constants.API_URL}/api/items?search=${search}`);
   const data = await res.json();
 
   return { props: { data, notFound: !!data?.error }, notFound: false };
