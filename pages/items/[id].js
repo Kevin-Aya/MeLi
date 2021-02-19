@@ -2,7 +2,7 @@ import ImageComponent from "../../components/ImageComponent";
 import Container from "../../components/Container";
 import constants from "../../constants";
 import ProductNotFound from "../../components/ProductNotFound";
-
+import constants from "./../../constants";
 function Detail({ item, notFound }) {
   if (notFound) return <ProductNotFound />;
 
@@ -75,8 +75,10 @@ function Detail({ item, notFound }) {
 export async function getServerSideProps(context) {
   let {
     query: { id },
+    req,
   } = context;
-  const res = await fetch(`${constants.API_URL}/api/items/${id}`);
+  const API_URL = req.headers.host;
+  const res = await fetch(`https://${API_URL}/api/items/${id}`);
   const item = await res.json();
   return { props: { item, notFound: !!item?.error }, notFound: false };
 }

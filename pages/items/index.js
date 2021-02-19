@@ -1,7 +1,7 @@
 import Container from "../../components/Container";
 import Product from "../../components/product";
 import ProductNotFound from "../../components/ProductNotFound";
-
+import constants from "./../../constants";
 function Items({ data, notFound }) {
   if (notFound) return <ProductNotFound search />;
   return (
@@ -18,8 +18,10 @@ function Items({ data, notFound }) {
 export async function getServerSideProps(context) {
   let {
     query: { search },
+    req,
   } = context;
-  const res = await fetch(`${constants.API_URL}/api/items?search=${search}`);
+  const API_URL = req.headers.host;
+  const res = await fetch(`https://${API_URL}/api/items?search=${search}`);
   const data = await res.json();
 
   return { props: { data, notFound: !!data?.error }, notFound: false };
