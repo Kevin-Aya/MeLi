@@ -2,7 +2,7 @@ import ImageComponent from "../../components/ImageComponent";
 import Container from "../../components/Container";
 import constants from "../../constants";
 import ProductNotFound from "../../components/ProductNotFound";
-import constants from "./../../constants";
+
 function Detail({ item, notFound }) {
   if (notFound) return <ProductNotFound />;
 

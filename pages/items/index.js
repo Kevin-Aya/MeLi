@@ -1,7 +1,7 @@
 import Container from "../../components/Container";
 import Product from "../../components/product";
 import ProductNotFound from "../../components/ProductNotFound";
-import constants from "./../../constants";
+
 function Items({ data, notFound }) {
   if (notFound) return <ProductNotFound search />;
   return (
