@@ -23,7 +23,7 @@ export async function getItemById(req, id) {
       notFound: true,
     };
   }
-  console.log("propssss", props);
+  console.log("propssss by id", props);
   return props;
 }
 
@@ -52,6 +52,6 @@ export async function getItems(req, search) {
       notFound: true,
     };
   }
-
+  console.log("propssss items", props);
   return props;
 }
