@@ -23,6 +23,7 @@ export async function getItemById(req, id) {
       notFound: true,
     };
   }
+  console.log("propssss", props);
   return props;
 }
 
