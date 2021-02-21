@@ -1,30 +1,31 @@
 import Container from "../../components/Container";
 import Product from "../../components/product";
 import ProductNotFound from "../../components/ProductNotFound";
+import {getItems} from "../../services/meli-api";
 
-function Items({ data, notFound }) {
+export async function getServerSideProps({query: {search}, req}) {
+  const props = await getItems(req, search);
+
+  return {props};
+}
+
+/**
+ * @description Renderiza los items a partir de los props
+ * @param {Array[{object}]} data
+ * @param {boolean} notFound
+ */
+function Items({data, notFound}) {
   if (notFound) return <ProductNotFound search />;
   return (
     <Container>
       {data?.items.map((item, index) => (
-        <>
-          <Product key={index} item={item} />
+        <div key={index}>
+          <Product item={item} />
           {index != data.items.length && <div className="divider" />}
-        </>
+        </div>
       ))}
     </Container>
   );
-}
-export async function getServerSideProps(context) {
-  let {
-    query: { search },
-    req,
-  } = context;
-  const API_URL = req.headers.host;
-  const res = await fetch(`https://${API_URL}/api/items?search=${search}`);
-  const data = await res.json();
-
-  return { props: { data, notFound: !!data?.error }, notFound: false };
 }
 
 export default Items;

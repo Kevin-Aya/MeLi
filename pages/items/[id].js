@@ -2,14 +2,26 @@ import ImageComponent from "../../components/ImageComponent";
 import Container from "../../components/Container";
 import constants from "../../constants";
 import ProductNotFound from "../../components/ProductNotFound";
+import {getItemById} from "../../services/meli-api";
 
-function Detail({ item, notFound }) {
+export async function getServerSideProps({query: {id}, req}) {
+  const props = await getItemById(req, id);
+
+  return {props};
+}
+
+/**
+ * @description Renderiza el item a partir los props
+ * @param {object} item
+ * @param {boolean} notFound
+ */
+function Detail({item, notFound}) {
   if (notFound) return <ProductNotFound />;
 
   let {
     item: {
       title,
-      price: { amount },
+      price: {amount},
       picture,
       condition,
       free_shipping,
@@ -32,7 +44,7 @@ function Detail({ item, notFound }) {
           </div>
           <div className="col-span-9 lg:col-span-3 infoContainer">
             <p className="estado">{`${
-              constants.TRADUCCIONES.CONDICION[condition]
+              constants.TRANSALATE.CONDICION[condition]
             } - ${sold_quantity} vendido${
               (sold_quantity != 1 && "s") || ""
             }`}</p>
@@ -58,29 +70,19 @@ function Detail({ item, notFound }) {
       </div>
       <div className="row-auto">
         <div className="grid grid-cols-9">
-          <div className="col-span-6 descriptionContainer">
+          <div className="col-span-9 lg:col-span-6 descriptionContainer">
             <p className="title">Descripción del producto</p>
             <p
               className="description"
               dangerouslySetInnerHTML={{
-                __html: description?.replace(/[\r\n]/g, "<br>"),
-              }}></p>
+                __html: description,
+              }}
+            />
           </div>
         </div>
       </div>
     </Container>
   );
-}
-
-export async function getServerSideProps(context) {
-  let {
-    query: { id },
-    req,
-  } = context;
-  const API_URL = req.headers.host;
-  const res = await fetch(`https://${API_URL}/api/items/${id}`);
-  const item = await res.json();
-  return { props: { item, notFound: !!item?.error }, notFound: false };
 }
 
 export default Detail;

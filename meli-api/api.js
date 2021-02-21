@@ -1,51 +1,45 @@
 import constants from "./../constants";
+import axios from "axios";
 
 export const getItems = async (searchText) => {
   try {
-    let res = await fetch(
-        `${constants.URL_MELI_API}/sites/MLA/search?q=${searchText}`,
-      ),
-      data = await res.json();
+    searchText = encodeURI(searchText);
+    let {data} = await axios.get(
+      `${constants.API_CONSTANTS.URL_MELI_API}/sites/MLA/search?q=${searchText}`
+    );
 
-    if (data?.error) {
-      throw {
-        error: data.error || "Internal Server Error",
-        message: data.message || "Internal Server Error",
-        status: data.status || 500,
-      };
-    }
     let items = data?.results.slice(0, 4);
     const schema = await schemaItems(items);
-
     return schema;
   } catch (error) {
-    console.log("error:", error);
-    return error;
+    return {
+      error: error.response.data || "Internal Server Error",
+      message: error.message || "Internal Server Error",
+      status: error.response.status || 500,
+    };
   }
 };
 
 export const getItemById = async (id) => {
   try {
     let [item, description] = await Promise.all([
-      fetch(`${constants.URL_MELI_API}/items/${id}`).then((res) => res.json()),
-      fetch(`${constants.URL_MELI_API}/items/${id}/description`).then((res) =>
-        res.json(),
-      ),
+      axios
+        .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}`)
+        .then(({data}) => data),
+      axios
+        .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}/description`)
+        .then(({data}) => data),
     ]);
-
-    if (item?.error) {
-      throw {
-        error: item.error || "Internal Server Error",
-        message: item.message || "Internal Server Error",
-        status: item.status || 500,
-      };
-    }
 
     let schema = schemaDetailItem(item, description);
 
     return schema;
   } catch (error) {
-    return error;
+    return {
+      error: error.response.data || "Internal Server Error",
+      message: error.message || "Internal Server Error",
+      status: error.response.status || 500,
+    };
   }
 };
 
@@ -70,38 +64,39 @@ let schemaItems = (items) => {
     ({
       id,
       title,
+      price,
+      currency_id: currency,
       prices,
       condition,
       thumbnail,
-      shipping: { free_shipping },
-      address: { state_name },
+      shipping: {free_shipping},
+      address: {state_name},
     }) => {
-      let { amount, currency_id } = prices?.prices.shift();
-      // .Webp format has the bes resolution
-      thumbnail = thumbnail
-        .substr(thumbnail.lastIndexOf("/"))
-        .replace("I.jpg", "V.webp");
+      prices = (prices?.prices && prices?.prices.shift()) ?? {
+        amount: price,
+        currency_id: currency,
+      };
+      let {amount, currency_id} = prices;
+      // .Webp format has the best resolution
+      thumbnail = thumbnail.replace("I.jpg", "V.webp");
       return {
         id,
         title,
         price: {
           currency: currency_id,
           amount: transformNumberToCurrency(amount),
-          decimals: "Number",
+          decimals: "",
         },
         picture: thumbnail,
         condition,
         free_shipping,
         state_name,
       };
-    },
+    }
   );
 
   return {
-    author: {
-      name: "John", //🤔 Param Not Found
-      lastname: "Doe", //🤔 Param Not Found
-    },
+    ...constants.API_CONSTANTS.AUTHOR,
     categories: ["", "", ""], //🤔 Param disordered or confused
     items,
   };
@@ -116,22 +111,17 @@ const schemaDetailItem = (item, description) => {
     pictures,
     condition,
     sold_quantity,
-    shipping: { free_shipping },
+    shipping: {free_shipping},
   } = item;
-  let { plain_text, error } = description;
+  let {plain_text, error} = description;
 
   //Get first pic
   let pictureTransformed = pictures.length && pictures.shift()?.url;
   // .Webp format has the best resolution
-  pictureTransformed = pictureTransformed
-    .substr(pictureTransformed.lastIndexOf("/"))
-    .replace(".jpg", ".webp");
+  pictureTransformed = pictureTransformed.replace(".jpg", ".webp");
 
   return {
-    author: {
-      name: "String", //🤔 Param Not Found
-      lastname: "String", //🤔 Param Not Found
-    },
+    ...constants.API_CONSTANTS.AUTHOR,
     item: {
       id,
       title,
@@ -144,7 +134,9 @@ const schemaDetailItem = (item, description) => {
       condition: condition,
       free_shipping,
       sold_quantity,
-      description: error ? "No hay descripción del producto" : plain_text,
+      description: error
+        ? "No hay descripción del producto"
+        : plain_text.replace(/\r?\n/g, "<br>"),
     },
   };
 };

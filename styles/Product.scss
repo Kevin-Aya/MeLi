@@ -30,7 +30,7 @@
 }
 
 .infoProductContainer {
-  width: 60%;
+  width: 80%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -65,7 +65,12 @@
 }
 
 @media screen and (max-width: 500px) {
-  .infoProductContainer > .title {
-    max-width: 100%;
+  .infoProductContainer {
+    width: 50%;
+    > .title {
+      max-width: 100%;
+      overflow: hidden;
+      font-size: smaller;
+    }
   }
 }

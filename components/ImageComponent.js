@@ -1,9 +1,10 @@
 import Image from "next/image";
 
-export default function ImageComponent({ url, title, width, height }) {
-  const loader = ({ src }) => {
-    return `https://http2.mlstatic.com${src}`;
+export default function ImageComponent({url, title, width, height}) {
+  const loader = ({src}) => {
+    return src;
   };
+
   return (
     <Image
       loader={loader}
