@@ -1,6 +1,7 @@
 ## Instalación
 
 ### Probar en producción:
+
 abrir el siguiente enlace [https://me-li.vercel.app](https://me-li.vercel.app).
 
 ### Correr en modo desarrollo:
@@ -9,9 +10,6 @@ abrir el siguiente enlace [https://me-li.vercel.app](https://me-li.vercel.app).
 npm install
 npm run dev
 ```
-
-
-
 
 abrir el siguiente enlace [http://localhost:3000](http://localhost:3000).
 
@@ -25,7 +23,9 @@ Para la API se puede acceder con los siguientes endpoints:
 ```
 
 ## Test API
- Para hacer los test unitarios:
+
+Para hacer los test unitarios:
+
 ```bash
 npm run test
 ```
