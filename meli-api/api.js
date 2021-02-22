@@ -4,8 +4,8 @@ import axios from "axios";
 export const getItems = async (searchText) => {
   try {
     searchText = encodeURI(searchText);
-    let {data} = await axios.get(
-      `${constants.API_CONSTANTS.URL_MELI_API}/sites/MLA/search?q=${searchText}`
+    let { data } = await axios.get(
+      `${constants.API_CONSTANTS.URL_MELI_API}/sites/MLA/search?q=${searchText}`,
     );
 
     let items = data?.results.slice(0, 4);
@@ -25,10 +25,10 @@ export const getItemById = async (id) => {
     let [item, description] = await Promise.all([
       axios
         .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}`)
-        .then(({data}) => data),
+        .then(({ data }) => data),
       axios
         .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}/description`)
-        .then(({data}) => data),
+        .then(({ data }) => data),
     ]);
 
     let schema = schemaDetailItem(item, description);
@@ -69,16 +69,16 @@ let schemaItems = (items) => {
       prices,
       condition,
       thumbnail,
-      shipping: {free_shipping},
-      address: {state_name},
+      shipping: { free_shipping },
+      address: { state_name },
     }) => {
       prices = (prices?.prices && prices?.prices.shift()) ?? {
         amount: price,
         currency_id: currency,
       };
-      let {amount, currency_id} = prices;
+      let { amount, currency_id } = prices;
       // .Webp format has the best resolution
-      thumbnail = thumbnail.replace("I.jpg", "V.webp");
+      thumbnail = thumbnail.replace("http", "https").replace("I.jpg", "V.webp");
       return {
         id,
         title,
@@ -92,7 +92,7 @@ let schemaItems = (items) => {
         free_shipping,
         state_name,
       };
-    }
+    },
   );
 
   return {
@@ -111,9 +111,9 @@ const schemaDetailItem = (item, description) => {
     pictures,
     condition,
     sold_quantity,
-    shipping: {free_shipping},
+    shipping: { free_shipping },
   } = item;
-  let {plain_text, error} = description;
+  let { plain_text, error } = description;
 
   //Get first pic
   let pictureTransformed = pictures.length && pictures.shift()?.url;
