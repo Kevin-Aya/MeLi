@@ -1,12 +1,12 @@
 import Container from "../../components/Container";
 import Product from "../../components/product";
 import ProductNotFound from "../../components/ProductNotFound";
-import {getItems} from "../../services/meli-api";
+import { getItems } from "../../services/meli-api";
 
-export async function getServerSideProps({query: {search}, req}) {
+export async function getServerSideProps({ query: { search }, req }) {
   const props = await getItems(req, search);
 
-  return {props};
+  return { props };
 }
 
 /**
@@ -14,10 +14,10 @@ export async function getServerSideProps({query: {search}, req}) {
  * @param {Array[{object}]} data
  * @param {boolean} notFound
  */
-function Items({data, notFound}) {
+function Items({ data, notFound }) {
   if (notFound) return <ProductNotFound search />;
   return (
-    <Container>
+    <Container styles="containerProducts md:my-4">
       {data?.items.map((item, index) => (
         <div key={index}>
           <Product item={item} />

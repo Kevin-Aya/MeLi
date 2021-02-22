@@ -23,7 +23,6 @@ export async function getItemById(req, id) {
       notFound: true,
     };
   }
-  console.log("propssss by id", props);
   return props;
 }
 
@@ -37,12 +36,9 @@ export async function getItems(req, search) {
   const API_URL = `${constants.SERVER_MODE}://${req.headers.host}`;
   let props;
   try {
-    console.log(search);
     if (search && search.length) {
       search = encodeURI(search);
       let { data } = await axios.get(`${API_URL}/api/items?search=${search}`);
-      //revisar problema no trae datos en produccion
-      // data = data?.data;
       props = {
         data,
         notFound: !data?.items.length,
@@ -51,11 +47,9 @@ export async function getItems(req, search) {
       throw "";
     }
   } catch (error) {
-    // console.log(error);
     props = {
       notFound: true,
     };
   }
-  console.log("propssss items", props);
   return props;
 }

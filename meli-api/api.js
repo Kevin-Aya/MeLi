@@ -1,6 +1,10 @@
 import constants from "./../constants";
 import axios from "axios";
 
+/**
+ * @description Servicio que se encarga de obtener la lista de items según el texto de busqueda
+ * @param {String} searchText
+ */
 export const getItems = async (searchText) => {
   try {
     searchText = encodeURI(searchText);
@@ -19,19 +23,16 @@ export const getItems = async (searchText) => {
     };
   }
 };
-
+/**
+ * @description Servicio que se encarga de obtener el item seleccionado
+ * @param {String} id
+ */
 export const getItemById = async (id) => {
   try {
-    let [item, description] = await Promise.all([
-      axios
-        .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}`)
-        .then(({ data }) => data),
-      axios
-        .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}/description`)
-        .then(({ data }) => data),
-    ]);
-
-    let schema = schemaDetailItem(item, description);
+    let item = await axios
+      .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}`)
+      .then(({ data }) => data);
+    let schema = await schemaDetailItem(item);
 
     return schema;
   } catch (error) {
@@ -43,13 +44,48 @@ export const getItemById = async (id) => {
   }
 };
 
+/**
+ * @description Servicio que se encarga de obtener las categorias a las que pertence el item
+ * @param {String} categoryId
+ */
+const getCategories = async (categoryId) => {
+  try {
+    let categories = await axios
+      .get(`${constants.API_CONSTANTS.URL_MELI_API}/categories/${categoryId}`)
+      .then(({ data }) => data);
+    return categories?.path_from_root;
+  } catch (error) {
+    return [];
+  }
+};
+
+/**
+ * @description Servicio que se encarga de obtener la descripcion de un item
+ * @param {String} id
+ */
+const getDescription = async (id) => {
+  try {
+    let data = await axios
+      .get(`${constants.API_CONSTANTS.URL_MELI_API}/items/${id}/description`)
+      .then(({ data }) => data);
+    return data.plain_text.replace(/\r?\n/g, "<br>");
+  } catch (error) {
+    return "No hay descripción del producto";
+  }
+};
+
 //Transformers
+/**
+ * @description Se encarga de recibir un numero y convertirlo a un formato legible
+ * @param {Number} num
+ */
 const transformNumberToCurrency = (num) => {
   //Number to Currency | expected format: ["$ x.xxx.xxx","$ xx.xxx","$ xxxx"]
   let number = new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
     minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(num);
   //  With this condition will fix thousand numbers decimals
   let thousandFormatNumbers =
@@ -59,6 +95,11 @@ const transformNumberToCurrency = (num) => {
 };
 
 //helpers
+/**
+ * @description Schema que obtiene y transforma lo necesario para app
+ * @param {Array} items
+ * @returns {Array} items convertido
+ */
 let schemaItems = (items) => {
   items = items.map(
     ({
@@ -97,12 +138,15 @@ let schemaItems = (items) => {
 
   return {
     ...constants.API_CONSTANTS.AUTHOR,
-    categories: ["", "", ""], //🤔 Param disordered or confused
     items,
   };
 };
-
-const schemaDetailItem = (item, description) => {
+/**
+ * @description Schema que obtiene y transforma lo necesario para app
+ * @param {Object} items
+ * @returns {Array} item convertido
+ */
+const schemaDetailItem = async (item) => {
   let {
     id,
     title,
@@ -112,8 +156,9 @@ const schemaDetailItem = (item, description) => {
     condition,
     sold_quantity,
     shipping: { free_shipping },
+    category_id,
   } = item;
-  let { plain_text, error } = description;
+  let description = await getDescription(id);
 
   //Get first pic
   let pictureTransformed = pictures.length && pictures.shift()?.url;
@@ -128,15 +173,14 @@ const schemaDetailItem = (item, description) => {
       price: {
         currency: currency_id,
         amount: transformNumberToCurrency(price),
-        decimals: "Number", //🤔 Param Not Found
+        decimals: "Number",
       },
       picture: pictureTransformed,
       condition: condition,
       free_shipping,
       sold_quantity,
-      description: error
-        ? "No hay descripción del producto"
-        : plain_text.replace(/\r?\n/g, "<br>"),
+      description,
+      categories: await getCategories(category_id),
     },
   };
 };
