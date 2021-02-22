@@ -93,6 +93,19 @@ const transformNumberToCurrency = (num) => {
 
   return thousandFormatNumbers || number;
 };
+/**
+ *@description funcion que se encarga de corregir la url
+ * para obtener la mejor imagen del servidor
+ * @param {String} picture url imagen
+ * @param {Boolean} items se encarga de saber de que Schema viene
+ */
+const transformPicture = (picture, items = false) => {
+  picture = picture.replace("http", "https");
+  picture = items
+    ? picture.replace("I.jpg", "V.webp")
+    : picture.replace(".jpg", ".webp");
+  return picture;
+};
 
 //helpers
 /**
@@ -119,7 +132,7 @@ let schemaItems = (items) => {
       };
       let { amount, currency_id } = prices;
       // .Webp format has the best resolution
-      thumbnail = thumbnail.replace("http", "https").replace("I.jpg", "V.webp");
+      thumbnail = transformPicture(thumbnail, true);
       return {
         id,
         title,
@@ -163,7 +176,7 @@ const schemaDetailItem = async (item) => {
   //Get first pic
   let pictureTransformed = pictures.length && pictures.shift()?.url;
   // .Webp format has the best resolution
-  pictureTransformed = pictureTransformed.replace(".jpg", ".webp");
+  pictureTransformed = transformPicture(pictureTransformed);
 
   return {
     ...constants.API_CONSTANTS.AUTHOR,
