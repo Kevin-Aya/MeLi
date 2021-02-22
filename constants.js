@@ -11,5 +11,5 @@ export default {
       },
     },
   },
-  SERVER_MODE: process.env.NODE_ENV === "development" ? "http" : "https",
+  SERVER_MODE: process.env.NODE_ENV == "development" ? "http" : "https",
 };
